@@ -1,0 +1,117 @@
+import sqlite3
+import schedule
+import time
+import tkinter as tk
+from tkinter import messagebox
+from datetime import datetime
+import threading
+
+# Inisialisasi database SQLite
+def init_db():
+    conn = sqlite3.connect('reminders.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            medication_name TEXT NOT NULL,
+            reminder_time TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Fungsi untuk menampilkan pengingat
+def remind_medication(medication_name):
+    messagebox.showinfo("Pengingat Obat", f"Sudah waktunya untuk minum {medication_name}!")
+
+# Fungsi untuk menambahkan jadwal pengingat
+def add_reminder():
+    medication_name = entry_medication.get()
+    time_str = entry_time.get()
+    
+    if not medication_name or not time_str:
+        messagebox.showerror("Error", "Nama obat dan waktu tidak boleh kosong.")
+        return
+
+    # Validasi format waktu
+    try:
+        datetime.strptime(time_str, "%H:%M")
+    except ValueError:
+        messagebox.showerror("Error", "Format waktu salah! Harus dalam format HH:MM.")
+        return
+
+    try:
+        # Menyimpan ke database
+        conn = sqlite3.connect('reminders.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO reminders (medication_name, reminder_time) VALUES (?, ?)", 
+                       (medication_name, time_str))
+        conn.commit()
+        conn.close()
+
+        # Menjadwalkan pengingat setiap hari pada waktu yang ditentukan
+        schedule.every().day.at(time_str).do(remind_medication, medication_name)
+        
+        # Tampilkan pengingat di daftar tampilan display
+        reminder_display.insert(tk.END, f"{medication_name} - {time_str}")
+        
+        messagebox.showinfo("Sukses", f"Pengingat untuk {medication_name} telah ditambahkan pada pukul {time_str}.")
+        entry_medication.delete(0, tk.END)
+        entry_time.delete(0, tk.END)
+    except Exception as e:
+        messagebox.showerror("Error", f"Gagal menambahkan pengingat: {e}")
+
+# Fungsi untuk menjalankan jadwal
+def run_schedule():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Membuat GUI menggunakan Tkinter
+root = tk.Tk()
+root.title("Pengingat Obat")
+root.geometry("500x400")
+root.configure(bg="#E0F7FA")
+
+# Membuat frame untuk input dengan tema kesehatan
+frame_input = tk.Frame(root, bg="#E0F7FA")
+frame_input.pack(pady=20)
+
+# Label judul
+label_title = tk.Label(frame_input, text="Pengingat Obat Harian", font=("Helvetica", 18, "bold"), bg="#E0F7FA", fg="#00796B")
+label_title.grid(row=0, columnspan=2, pady=10)
+
+# Label dan Entry untuk nama obat
+label_medication = tk.Label(frame_input, text="Nama Obat:", bg="#E0F7FA", font=("Helvetica", 12))
+label_medication.grid(row=1, column=0, padx=10, pady=5, sticky="e")
+entry_medication = tk.Entry(frame_input, width=25, font=("Helvetica", 12), bg="#ffffff")
+entry_medication.grid(row=1, column=1, padx=10, pady=5)
+
+# Label dan Entry untuk waktu pengingat
+label_time = tk.Label(frame_input, text="Waktu (HH:MM):", bg="#E0F7FA", font=("Helvetica", 12))
+label_time.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+entry_time = tk.Entry(frame_input, width=25, font=("Helvetica", 12), bg="#ffffff")
+entry_time.grid(row=2, column=1, padx=10, pady=5)
+
+# Tombol untuk menambahkan pengingat
+button_add = tk.Button(frame_input, text="Tambahkan Pengingat", command=add_reminder, font=("Helvetica", 12), bg="#00796B", fg="white", padx=10, pady=5)
+button_add.grid(row=3, columnspan=2, pady=10)
+
+# Daftar tampilan untuk pengingat
+frame_display = tk.Frame(root, bg="#E0F7FA")
+frame_display.pack(pady=10, fill="x")
+
+label_display = tk.Label(frame_display, text="Daftar Pengingat", font=("Helvetica", 14), bg="#E0F7FA", fg="#00796B")
+label_display.pack()
+
+reminder_display = tk.Listbox(frame_display, font=("Helvetica", 12), width=50, height=10)
+reminder_display.pack(padx=10, pady=5)
+
+# Menjalankan fungsi inisialisasi database
+init_db()
+
+# Menjalankan jadwal di thread terpisah agar GUI tetap responsif
+threading.Thread(target=run_schedule, daemon=True).start()
+
+# Menjalankan aplikasi Tkinter
+root.mainloop()

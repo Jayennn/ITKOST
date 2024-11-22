@@ -1,0 +1,35 @@
+/* Background color for the main window */
+QWidget#mainWindow {
+  background-color: #fff;
+  font-family: "Be Vietnam Pro", sans-serif;
+}
+
+/* Container styling */
+QWidget#container {
+  /* background-color: #f0f0f0; */
+  border-radius: 8px;
+  padding: 20px;
+}
+
+QLabel {
+  color: #424242;
+}
+
+QLineEdit {
+  width: 100%;
+  border: 1px #E4E4E7 solid;
+  background-color: #f9f9f9;
+  font-weight: 500;
+  color: #1A1A1A;
+  padding-left: 8px;
+  padding-right: 8px;
+  /* padding: 12px 8px; */
+  border-radius: 4px; 
+  min-height: 30px;
+  max-height: 30px;
+}
+
+/* Placeholder text color for all QLineEdit fields */
+QLineEdit::placeholder {
+  color: #666;
+}

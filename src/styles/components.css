@@ -1,0 +1,33 @@
+/* Styling for the heading label */
+QLabel#heading {
+  font-size: 20px; 
+  line-height: 28px;
+  color: #1A1A1A;
+}
+
+/* Styling for the subheading label */
+QLabel#subheading {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Styling for the phone number input field */
+QLineEdit#phone_number, QLineEdit#password {
+  display: inline-flex;
+  width: 100%;
+  border: 1px #E4E4E7 solid;
+  background-color: #f9f9f9;
+  color: #1A1A1A;
+  padding: 12px 8px;
+  border-radius: 6px; 
+  height: 14px;
+}
+
+
+
+QLabel#phone_label, QLabel#password_label {
+  font-size: 14px; 
+  line-height: 20px;
+  color: #1A1A1A;
+}
