@@ -8,17 +8,13 @@ from database.conn import DatabaseConnection
 from components.navbar import Navbar
 from pages.register_page import RegisterPage
 from config.hashPassword import check_password
-from win11toast import toast
-from config.session import Session
 
 class LoginPage(QWidget):
       def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.setObjectName('mainWindow') 
 
-            #Set Session
-            self.session = Session()
-            print(self.session.get_user_info())
+
             # Load Fonts
             FontLoader.load_fonts()
 
@@ -50,7 +46,7 @@ class LoginPage(QWidget):
                   'password': self.password.text()
             }
             try:
-                  query = "SELECT * FROM public.users WHERE phone_number= %s AND password=%s"
+                  query = "SELECT * FROM public.user WHERE phone_number= %s AND password=%s"
                   self.conn.cursor.execute(
                         query, 
                         (value['phone_number'], value['password'])
@@ -59,7 +55,7 @@ class LoginPage(QWidget):
                   user_name = result[1]
                   if result:
                         print("User exists:", result)
-                        toast('Login Success 👌', f"Welcome {user_name}")
+                        # toast('Login Success 👌', f"Welcome {user_name}")
                   else:
                         print("No user found with this phone number.")
 

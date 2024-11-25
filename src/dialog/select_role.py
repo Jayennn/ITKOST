@@ -13,7 +13,7 @@ class SelectRole(QWidget):
     self.setObjectName('mainWindow') 
 
     # Get global session
-    self.session = QApplication.instance().sesi
+    # self.session = QApplication.instance().sesi
 
     # Reference to the current home page
     self.home_page_instance = home_page_instance
@@ -37,8 +37,8 @@ class SelectRole(QWidget):
 
   
     self.close()
-    print(role)
-    self.session.set_user_info('budi', 'ayam')
+    # print(role)
+    # self.session.set_user_info('budi', 'ayam')
 
 
   def init_ui(self):

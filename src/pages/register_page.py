@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QVBoxLayout, QWidget
 import psycopg2
-from win11toast import toast
+# from win11toast import toast
 from config.settings import FontLoader, Settings
 from database.conn import DatabaseConnection
 from components.index import Label
@@ -37,7 +37,7 @@ class RegisterPage(QWidget):
     
     try:
       query = """
-      INSERT INTO public.users (name, phone_number, password) 
+      INSERT INTO public.user (name, phone_number, password) 
       VALUES (%s, %s, %s)
       """
 
@@ -49,7 +49,7 @@ class RegisterPage(QWidget):
       
       self.conn.conn.commit()
       print("User registered successfully!")
-      toast('Login Success 👌', f"Welcome {value['name']}")
+      # toast('Login Success 👌', f"Welcome {value['name']}")
     except psycopg2.Error as e:
       print("Database Error: ", e)
 
