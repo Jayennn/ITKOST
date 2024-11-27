@@ -8,6 +8,7 @@ from database.conn import DatabaseConnection
 from components.navbar import Navbar
 from pages.register_page import RegisterPage
 from config.hashPassword import check_password
+from config.session import set_user_info
 
 class LoginPage(QWidget):
       def __init__(self, *args, **kwargs):
@@ -20,7 +21,8 @@ class LoginPage(QWidget):
 
             # Initialize UI
             self.init_ui()
-            
+
+
             self.conn = DatabaseConnection()
             self.conn.connection()
 
@@ -29,6 +31,13 @@ class LoginPage(QWidget):
             self.register_page = RegisterPage()
             self.register_page.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
             self.register_page.show()
+            self.destroy()
+
+      def tenant_home_page(self):
+            from pages.tenant.tenant_home_page import TenantHomePage
+            self.tenant_home_page = TenantHomePage()
+            self.tenant_home_page.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+            self.tenant_home_page.show()
             self.destroy()
       
       def validate_form(self):
@@ -52,10 +61,11 @@ class LoginPage(QWidget):
                         (value['phone_number'], value['password'])
                   )
                   result = self.conn.cursor.fetchone()
-                  user_name = result[1]
                   if result:
+                        user_name = result[1]
                         print("User exists:", result)
-                        # toast('Login Success 👌', f"Welcome {user_name}")
+                        set_user_info(username=user_name, role='tenant') 
+                        self.tenant_home_page()
                   else:
                         print("No user found with this phone number.")
 

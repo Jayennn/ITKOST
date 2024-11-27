@@ -1,16 +1,15 @@
-class Session():
-  def __init__(self):
-    self.username = None
-    self.role = None
+# config/session.py
+_session_data = {}
 
-  def clear_session(self):
-    self.username = None
-    self.role = None
+def set_user_info(username, role):
+    global _session_data
+    _session_data['username'] = username
+    _session_data['role'] = role
 
-  def set_user_info(self, username, role):
-    self.username = username,
-    self.role = role
+def get_user_info():
+    global _session_data
+    return _session_data
 
-  def get_user_info(self):
-    return {'username': self.username, 'role': self.role}
-  
+def clear_session():
+    global _session_data
+    _session_data.clear()

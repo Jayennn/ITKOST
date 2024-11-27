@@ -4,7 +4,6 @@ from PyQt6.QtCore import Qt, QSize
 from components.button import Button
 from config.settings import Settings
 from config.settings import FontLoader
-from config.session import Session
 
 
 class SelectRole(QWidget):

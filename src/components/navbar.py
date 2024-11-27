@@ -21,7 +21,7 @@ class Navbar(QWidget):
 
     def init_ui(self):
         navbar_layout = QHBoxLayout()
-        navbar_layout.setContentsMargins(20, 5, 20, 5)
+        navbar_layout.setContentsMargins(20, 0, 20, 0)
         navbar_layout.setSpacing(10)
     
         brand_label = Label(
@@ -34,8 +34,8 @@ class Navbar(QWidget):
 
         spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        navbar_layout.addItem(spacer)
-
+        navbar_layout.addItem(spacer)   
+        
 
         self.button = Button('Login', 'navbar_button')
         self.button.setCursor(Qt.CursorShape.PointingHandCursor)
