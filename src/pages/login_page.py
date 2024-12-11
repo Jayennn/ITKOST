@@ -7,8 +7,7 @@ from PyQt6.QtCore import Qt
 from database.conn import DatabaseConnection
 from components.navbar import Navbar
 from pages.register_page import RegisterPage
-from config.hashPassword import check_password
-from config.session import set_user_info
+from config.session import set_user_info, get_user_info
 
 class LoginPage(QWidget):
       def __init__(self, *args, **kwargs):
@@ -22,6 +21,10 @@ class LoginPage(QWidget):
             # Initialize UI
             self.init_ui()
 
+            # Get role from session 
+            session_data = get_user_info()
+            self.role = session_data.get('role', None)
+            print('current role: ', self.role)
 
             self.conn = DatabaseConnection()
             self.conn.connection()
@@ -38,6 +41,13 @@ class LoginPage(QWidget):
             self.tenant_home_page = TenantHomePage()
             self.tenant_home_page.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
             self.tenant_home_page.show()
+            self.destroy()
+      
+      def owner_dashboard_page(self):
+            from pages.owner.owner_dashboard_page import OwnerDashboardPage
+            self.owner_dashboard_page = OwnerDashboardPage()
+            self.owner_dashboard_page.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+            self.owner_dashboard_page.show()
             self.destroy()
       
       def validate_form(self):
@@ -61,11 +71,21 @@ class LoginPage(QWidget):
                         (value['phone_number'], value['password'])
                   )
                   result = self.conn.cursor.fetchone()
+
                   if result:
+
                         user_name = result[1]
-                        print("User exists:", result)
-                        set_user_info(username=user_name, role='tenant') 
-                        self.tenant_home_page()
+
+                        set_user_info(username=user_name, role=self.role)
+
+                        match self.role:
+                              case 'tenant':
+                                    self.tenant_home_page()
+                              case 'owner':
+                                    self.owner_dashboard_page()
+                              case _:
+                                    print('Unrecognized role:', self.role)    
+                                    
                   else:
                         print("No user found with this phone number.")
 

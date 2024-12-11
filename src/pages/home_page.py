@@ -22,7 +22,7 @@ class HomePage(QWidget):
     
     def open_select_roles_dialog(self):
         self.select_roles_dialog = SelectRole(home_page_instance=self)
-        self.select_roles_dialog.resize(300, 300)
+        self.select_roles_dialog.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
         self.select_roles_dialog.show()
 
     def init_ui(self):

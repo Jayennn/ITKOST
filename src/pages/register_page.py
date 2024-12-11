@@ -10,7 +10,7 @@ from components.input import Input
 from components.button import Button
 from widgets.container import Container
 from config.hashPassword import get_hashed_password
-
+from config.session import get_user_info
 
 class RegisterPage(QWidget):
   def __init__(self, *args, **kwargs):
@@ -22,6 +22,12 @@ class RegisterPage(QWidget):
 
     # Initialize UI
     self.init_ui()
+
+    # Get role from session
+    session_data = get_user_info()
+    self.role = session_data.get('role', None)
+    print('current role: ', self.role)
+
     
     self.conn = DatabaseConnection()
     self.conn.connection()
@@ -37,19 +43,23 @@ class RegisterPage(QWidget):
     
     try:
       query = """
-      INSERT INTO public.user (name, phone_number, password) 
-      VALUES (%s, %s, %s)
+      INSERT INTO public.user (name, phone_number, password, role) 
+      VALUES (%s, %s, %s, %s)
       """
 
       test = self.conn.cursor.execute(
         query, 
-        (value['name'], value['phone_number'], value['password'])
+        (value['name'], value['phone_number'], value['password'], self.role)
       )
       print(test)
       
       self.conn.conn.commit()
       print("User registered successfully!")
       # toast('Login Success 👌', f"Welcome {value['name']}")
+
+      self.open_login_page()
+      
+
     except psycopg2.Error as e:
       print("Database Error: ", e)
 

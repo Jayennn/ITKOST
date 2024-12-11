@@ -1,11 +1,14 @@
 from config.settings import Settings, FontLoader
 from database.conn import DatabaseConnection
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy
+from PyQt6.QtWidgets import QWidget, QSpacerItem,   QVBoxLayout, QHBoxLayout, QSizePolicy
 from components.label import Label
 from components.input import Input
 from components.navbar import Navbar
 from config.session import get_user_info, clear_session
 from components.room_card import RoomCard
+from components.button import Button
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap 
 class TenantHomePage(QWidget):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -29,6 +32,9 @@ class TenantHomePage(QWidget):
     self.home_page.show()
     self.destroy()
     print("Logged out")
+
+  def open_kost_pages(self):
+    print("GOW")
   
   def init_ui(self):
     layout = QVBoxLayout()
@@ -82,15 +88,19 @@ class TenantHomePage(QWidget):
     wrapper_top.addWidget(persuasive_text)
 
 
-    # search_bar = Input()
-
 
     # Add Text Wrapper to the main layout
     layout.addWidget(wrapper_widget)
 
+    wrapper_image_section_widget = QWidget()
+    wrapper_image_section = QVBoxLayout(wrapper_image_section_widget)
+    wrapper_image_section.setContentsMargins(20, 0, 20, 0)
+
+
     # Image Wrapper for Rooms (Room Cards)
     wrapper_image_widget = QWidget()
     wrapper_image = QHBoxLayout(wrapper_image_widget)
+
     rooms = [
         {"image": "src/assets/image.png", "title": "Room A", "description": "A cozy room with all amenities."},
         {"image": "src/assets/image.png", "title": "Room A", "description": "A cozy room with all amenities."},
@@ -103,8 +113,16 @@ class TenantHomePage(QWidget):
         # card.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         wrapper_image.addWidget(card)
 
-    # Add Image Wrapper below Text Wrapper
-    layout.addWidget(wrapper_image_widget)
+    wrapper_image_section.addWidget(wrapper_image_widget)
+
+    see_all_button = Button('See All')
+    see_all_button.clicked.connect(self.open_kost_pages)
+    wrapper_image_section.addWidget(see_all_button)
+
+    
+    layout.addWidget(wrapper_image_section_widget)
+    # # Add Image Wrapper below Text Wrapper
+    # layout.addWidget(wrapper_image_widget)
 
     # Add Content and Stretch to Layout
     layout.addWidget(content_widget)

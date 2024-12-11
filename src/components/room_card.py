@@ -50,7 +50,7 @@ class RoomCard(QWidget):
         wrapper_type = QHBoxLayout(wrapper_type_widget)
         wrapper_type.setContentsMargins(0, 0, 0, 0)
         type_label = Label(
-            text="Type",
+            text="Tipe",
             font_size=9,
             font_weights=Settings.FONT_WEIGHTS['medium']
         )
