@@ -60,26 +60,14 @@ class SelectRole(QWidget):
 
     # User Button
     self.user_button = Button(text='Pencari Kost', name='roles__button')
-    # self.user_button.setStyleSheet("""
-    #   #roles__button {
-    #     font-size: 12px;
-    #     font-weight: bold;
-    #   }
     
-    # """)
     self.user_button.setCursor(Qt.CursorShape.PointingHandCursor)
     self.user_button.setMinimumHeight(50)
     self.user_button.clicked.connect(lambda: self.open_login_page(role='tenant'))
 
     # Owner Button
     self.owner_button = Button(text='Pemilik Kost', name='roles__button')
-    # self.owner_button.setStyleSheet("""
-    #   #roles__button {
-    #     font-size: 12px;
-    #     font-weight: bold;
-    #   }
-    
-    # """)
+
     self.owner_button.setCursor(Qt.CursorShape.PointingHandCursor)
     self.owner_button.setMinimumHeight(50)
     self.owner_button.clicked.connect(lambda: self.open_login_page(role='owner'))

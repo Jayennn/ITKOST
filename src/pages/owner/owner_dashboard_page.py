@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QFrame, QLabel, 
     QStackedWidget, QGridLayout
 )
+from database.conn import DatabaseConnection
 from PyQt6.QtCore import Qt
 from config.settings import FontLoader, Settings
 from components.label import Label
@@ -15,8 +16,12 @@ class OwnerDashboardPage(QWidget):
         # Load Fonts
         FontLoader.load_fonts()
 
+        self.conn = DatabaseConnection()
+        self.conn.connection()
+
         # Initialize UI
         self.init_ui()
+
 
     def switch_page(self, index):
         """Switch the main content page."""
@@ -127,14 +132,27 @@ class OwnerDashboardPage(QWidget):
         layout.setSpacing(25)
         layout.addWidget(heading)
         
-        room_box_1 = RoomBoxOwner(
-            image_path="src/assets/placeholder-image.png",
-            title="Kost Putra",
-            description="Kamar luas dengan fasilitas lengkap.",
-            price="Rp. 500.000/bulan"
-        )
+        query = '''
+        SELECT dormitory.id AS dorm_id,
+            dormitory.name AS dorm_name,
+            public."user".name AS owner_name,
+            public."user".phone_number
+        FROM dormitory
+        INNER JOIN public."user" ON dormitory.user_id = public."user".id;
+        '''
+        self.conn.cursor.execute(query)
+        dormitories = self.conn.cursor.fetchall()
+        # print(dormitories)
+        for dorm in dormitories:
+            dorm_id, dorm_name, owner_name, owner_number = dorm
+            room_box = RoomBoxOwner(
+                image_path="src/assets/placeholder-image.png",
+                title=dorm_name,
+                description="Kamar luas dengan fasilitas lengkap.",
+                price="Rp. 500.000/Bulan"
+            )
+            layout.addWidget(room_box)
 
-        layout.addWidget(room_box_1)
         
 
         layout.addStretch()

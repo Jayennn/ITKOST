@@ -2,6 +2,7 @@ import sys
 from PyQt6.QtWidgets import QApplication
 from config.settings import FontLoader, Settings
 from pages.home_page import HomePage
+from pages.login_page import LoginPage
 from pages.owner.owner_dashboard_page import OwnerDashboardPage
 class App(QApplication):
     def __init__(self, argv):
