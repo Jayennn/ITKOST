@@ -9,6 +9,7 @@ from components.room_card import RoomCard
 from components.button import Button
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap 
+import psycopg2
 class TenantHomePage(QWidget):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -17,12 +18,12 @@ class TenantHomePage(QWidget):
     # Load Fonts
     FontLoader.load_fonts()
 
+    self.conn = DatabaseConnection()
+    self.conn.connection()
 
     # Initialize UI
     self.init_ui()
 
-    self.conn = DatabaseConnection()
-    self.conn.connection()
 
   def logout(self):
     clear_session()  # Clear session data
@@ -43,16 +44,6 @@ class TenantHomePage(QWidget):
 
     # Get user info from session
     user_info = get_user_info()
-    # if not user_info or not user_info.get('username'):
-    #     print("No session found, redirecting to login page.")
-    #     from pages.login_page import LoginPage  # Import the LoginPage
-    #     self.login_page = LoginPage()
-    #     self.login_page.resize(Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
-    #     self.login_page.show()
-    #     self.destroy()
-    #     return
-
-    # print("Session in TenantHomePage:", user_info)
 
     # Navbar
     navbar = Navbar(self)
@@ -94,40 +85,57 @@ class TenantHomePage(QWidget):
 
     wrapper_image_section_widget = QWidget()
     wrapper_image_section = QVBoxLayout(wrapper_image_section_widget)
-    wrapper_image_section.setContentsMargins(20, 0, 20, 0)
+    wrapper_image_section.setContentsMargins(0, 0, 0, 0)
 
 
     # Image Wrapper for Rooms (Room Cards)
     wrapper_image_widget = QWidget()
     wrapper_image = QHBoxLayout(wrapper_image_widget)
-
-    rooms = [
-        {"image": "src/assets/image.png", "title": "Room A", "description": "A cozy room with all amenities."},
-        {"image": "src/assets/image.png", "title": "Room A", "description": "A cozy room with all amenities."},
-        {"image": "src/assets/image.png", "title": "Room A", "description": "A cozy room with all amenities."},
-        # You can add more room data here
-    ]
-
-    for room in rooms:
-        card = RoomCard(room["image"], room["title"], room["description"])
-        # card.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+    wrapper_image.setAlignment(Qt.AlignmentFlag.AlignLeft)
+    try: 
+      query = '''
+        SELECT 
+          dormitory.name,
+          dorm_type."name" AS dormitory_type,
+          dormitory.address,
+          dormitory.price
+        FROM public.dormitory
+        INNER JOIN dorm_type ON dormitory.dorm_type_id = dorm_type.id;
+      '''
+      self.conn.cursor.execute(query)
+      dormitories = self.conn.cursor.fetchall()
+      for dormitory in dormitories:
+        dorm_name, dorm_type, dorm_address, dorm_price = dormitory
+        card = RoomCard(
+          dorm_name=dorm_name,
+          description=dorm_address,
+          image_path="src/assets/image.png",
+          dorm_type=dorm_type,
+          dorm_price=dorm_price
+        )
         wrapper_image.addWidget(card)
+    except psycopg2.Error as e:
+      print("Database Error: ", e)
 
     wrapper_image_section.addWidget(wrapper_image_widget)
 
-    see_all_button = Button('See All')
-    see_all_button.clicked.connect(self.open_kost_pages)
-    wrapper_image_section.addWidget(see_all_button)
-
-    
     layout.addWidget(wrapper_image_section_widget)
-    # # Add Image Wrapper below Text Wrapper
-    # layout.addWidget(wrapper_image_widget)
 
-    # Add Content and Stretch to Layout
+    footer_widget = QWidget()
+    footer_layout = QHBoxLayout(footer_widget)
+    footer_layout.setContentsMargins(20, 0, 20, 0)
+
+    see_all_button = Button('See All')
+    see_all_button.setFixedWidth(120)
+    see_all_button.clicked.connect(self.open_kost_pages)
+    footer_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+    footer_layout.addWidget(see_all_button)
+
+    layout.addStretch()
     layout.addWidget(content_widget)
+    layout.addWidget(footer_widget)
     layout.addStretch()
 
-    # Set the main layout for the page
+
     self.setLayout(layout)
 

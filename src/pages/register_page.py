@@ -137,31 +137,6 @@ class RegisterPage(QWidget):
         self.role_selector.addItems(['Pencari Kost (Tenant)', 'Pemilik Kost (Owner)'])
         self.role_selector.setObjectName('role_selector')
         self.role_selector.setFont(QFont(Settings.FONT_FAMILY, 8))
-        self.role_selector.setStyleSheet('''
-          QComboBox#role_selector {
-            width: 100%;
-            border: 1px #E4E4E7 solid;
-            background-color: #f9f9f9;
-            color: #1A1A1A;
-            padding: 12px 8px;
-            border-radius: 6px;
-            height: 14px;
-          }
-          QComboBox:editable {
-            background-color: white;
-          }
-          QComboBox::drop-down {
-            background-color: white;
-          }
-          QComboBox:!editable:on, QComboBox::drop-down:editable:on {
-            background-color: white;
-          }
-          QComboBox QAbstractItemView {
-            border: 1px solid #E4E4E7;
-            background-color: white;
-            color: #1A1A1A;
-          } 
-        ''')
         container.container_layout.addWidget(role_label)
         container.container_layout.addWidget(self.role_selector)
 

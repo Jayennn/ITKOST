@@ -9,17 +9,20 @@ from config.settings import Settings
 
 
 class RoomCard(QWidget):
-    def __init__(self, image_path, title, description, price="Rp. 10.000", *args, **kwargs):
+    def __init__(self, image_path, dorm_name, description, dorm_price, dorm_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Main layout for the card
         self.setObjectName("wrapper_card")
         self.setStyleSheet("""
             #wrapper_card {
                 border: 1px solid red;
+                min-width: 230px;
+                max-width: 300px;
             }
         """)
         layout = QVBoxLayout()
         layout.setSpacing(4)
+
 
         # Image section
         image_label = QLabel(self)
@@ -61,7 +64,7 @@ class RoomCard(QWidget):
         wrapper_type.addItem(spacer)
         
         category_label = Label(
-            text="Putra",
+            text=dorm_type,
             font_size=9,
             font_weights=Settings.FONT_WEIGHTS['medium']
         )
@@ -77,7 +80,7 @@ class RoomCard(QWidget):
 
         # Title
         title_label = Label(
-            text=title,
+            text=dorm_name,
             font_size=10,
             font_weights=Settings.FONT_WEIGHTS['black']
         )
@@ -88,7 +91,7 @@ class RoomCard(QWidget):
         wrapper_information.addItem(spacer)
 
         price_label = Label(
-            text=price,
+            text=str(dorm_price),
             font_size=9,
             font_weights=Settings.FONT_WEIGHTS['medium']
         )

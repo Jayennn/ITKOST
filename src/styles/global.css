@@ -1,5 +1,5 @@
 /* Background color for the main window */
-QWidget#mainWindow,
+QWidget,
 QScrollArea {
   background-color: #fff;
   font-family: "Be Vietnam Pro", sans-serif;
@@ -37,4 +37,59 @@ QLineEdit::placeholder {
 
 QWidget#room_card {
   border: 1px solid red
+}
+
+/* Table Styling */
+QTableWidget {
+  background-color: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  gridline-color: #E5E7EB;
+  color: #333333;
+  font-size: 10px;
+}
+
+QTableWidget::item {
+  padding: 8px;
+  max-width: 10px;
+}
+
+QHeaderView::section {
+  background-color: #F3F4F6;
+  /* Light gray header */
+  color: #1F2937;
+  /* Dark text */
+  border: none;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 6px;
+}
+
+QTableWidget QTableCornerButton::section {
+  background-color: #F3F4F6;
+}
+
+/* Combobox */
+QComboBox {
+  width: 100%;
+  border: 1px #E4E4E7 solid;
+  background-color: #f9f9f9;
+  color: #1A1A1A;
+  padding: 12px 8px;
+  border-radius: 6px;
+  height: 14px;
+}
+
+QComboBox:editable {
+  background-color: red;
+}
+
+QComboBox::drop-down {
+  color: #1A1A1A;
+}
+
+QComboBox QAbstractItemView {
+  border: 1px solid #E4E4E7;
+  background-color: white;
+  color: #1A1A1A;
 }

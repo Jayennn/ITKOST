@@ -17,12 +17,12 @@ class LoginPage(QWidget):
         # Load Fonts
         FontLoader.load_fonts()
 
+        # Initialize database connection
+        self.db = DatabaseConnection()
+
         # Initialize UI
         self.init_ui()
 
-        # Initialize database connection
-        self.conn = DatabaseConnection()
-        self.conn.connection()
 
     def open_register_page(self):
         from pages.register_page import RegisterPage
@@ -55,43 +55,54 @@ class LoginPage(QWidget):
 
     def form_submit(self):
         # Collect input values
-        value = {
-            'phone_number': self.phone_number.text(),
-            'password': self.password.text()
-        }
-        try:
+        phone_number = self.phone_number.text().strip()
+        password = self.password.text().strip()
+
+        with self.db as db:
             # Query to check if user exists with given credentials
-            query = "SELECT name, role FROM public.user WHERE phone_number=%s AND password=%s"
-            self.conn.cursor.execute(query, (value['phone_number'], value['password']))
-            result = self.conn.cursor.fetchone()
-            print("Query result:", result)
-
+            query = """
+                SELECT id, name, role 
+                FROM public.user 
+                WHERE phone_number = %s AND password = %s
+            """
+            
+            # Execute the query
+            result = db.query(query, (phone_number, password))
+            
             if result:
-                user_name = result[0]
-                role = result[1]  # Role retrieved from the database
+                user = db.cursor.fetchone()
+                
+                if user:
+                    # Store user info in session
+                    set_user_info(
+                        user_id=user['id'],
+                        username=user['name'],
+                        role=user['role']
+                    )
 
-                # Store user info in session
-                set_user_info(username=user_name, role=role)
-                print("Logged in as:", user_name, "Role:", role)
+                    print(f"Logged in as: {user['name']}, Role: {user['role']}, user id: {user['id']}")
 
-                # Redirect user based on role
-                match role:
-                    case 'tenant':
-                        self.tenant_home_page()
-                    case 'owner':
-                        self.owner_dashboard_page()
-                    case _:
-                        print('Unrecognized role:', role)
-                        QMessageBox.warning(self, "Login Failed", "Your role is not recognized.")
-            else:
-                # If no user found, show warning
-                print("No user found with this phone number or password.")
-                QMessageBox.warning(self, "Login Failed", "Invalid credentials.")
-
-        except psycopg2.Error as e:
-            # Handle database errors
-            print("Database Error: ", e)
-            QMessageBox.critical(self, "Database Error", str(e))
+                    # Redirect user based on role
+                    match user['role']:
+                        case 'tenant':
+                            self.tenant_home_page()
+                        case 'owner':
+                            self.owner_dashboard_page()
+                        case _:
+                            print(f'Unrecognized role: {user["role"]}')
+                            QMessageBox.warning(
+                                self,
+                                "Login Failed", 
+                                "Your role is not recognized."
+                            )
+                else:
+                    # If no user found, show warning
+                    print("No user found with this phone number or password.")
+                    QMessageBox.warning(
+                        self,
+                        "Login Failed",
+                        "Invalid phone number or password."
+                    )
 
     def init_ui(self):
         layout = QVBoxLayout()
